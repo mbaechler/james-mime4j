@@ -21,6 +21,7 @@ package org.apache.james.mime4j.message;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.apache.james.mime4j.MimeException;
 import org.apache.james.mime4j.MimeIOException;
@@ -42,6 +43,7 @@ import org.apache.james.mime4j.parser.MimeStreamParser;
 import org.apache.james.mime4j.stream.BodyDescriptorBuilder;
 import org.apache.james.mime4j.stream.Field;
 import org.apache.james.mime4j.stream.MimeConfig;
+import org.apache.james.mime4j.stream.NameValuePair;
 
 /**
  * Default implementation of {@link MessageBuilder}.
@@ -158,7 +160,7 @@ public class DefaultMessageBuilder implements MessageBuilder {
      *             {@link SingleBody}.
      */
     public Multipart copy(Multipart other) {
-        MultipartImpl copy = new MultipartImpl(other.getSubType());
+        MultipartImpl copy = new MultipartImpl(other.getSubType(), other.getContentTypeParameters());
         for (Entity otherBodyPart : other.getBodyParts()) {
             copy.addBodyPart(copy(otherBodyPart));
         }
@@ -245,6 +247,10 @@ public class DefaultMessageBuilder implements MessageBuilder {
 
     public Multipart newMultipart(final String subType) {
         return new MultipartImpl(subType);
+    }
+
+    public Multipart newMultipart(final String subType, NameValuePair... contentTypeParameters) {
+        return new MultipartImpl(subType, Arrays.asList(contentTypeParameters));
     }
 
     public Multipart newMultipart(final Multipart source) {
